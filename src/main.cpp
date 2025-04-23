@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
+#include <Brake_IR_Sensor.h>
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can0;
 CAN_message_t msg;
@@ -13,18 +14,19 @@ byte configData[8] = {
   1                 // 1 Mbit/s
 };
 
+
 void setup() {
     Serial.begin(115200);
     while (!Serial);  // Wait for Serial to connect
 
     Can0.begin();
-    Can0.setBaudRate(1000000);  // 1Mbit/s
+    Can0.setBaudRate(500000);  // 1Mbit/s
 
-    //Serial.println("CAN2 Ready to receive...");
+    Serial.println("CAN2 Ready to receive...");
 
-
+  /*
     // Prepare the config message
-    msg.id = 0x4C4;             // This should match the sensor's **current base ID**
+    msg.id = 0x4C4;
     msg.len = 8;
     for (int i = 0; i < msg.len; i++) {
       msg.buf[i] = configData[i];
@@ -39,19 +41,14 @@ void setup() {
   }
 
   Serial.println("Configuration complete!");
+
+  */
 }
 
 
 void loop() {
-  /*
-    if (Can0.read(msg)) {
-        Serial.print("ID: 0x");
-        Serial.print(msg.id, HEX);
-        Serial.print("  Data: ");
-        for (int i = 0; i < msg.len; i++) {
-            Serial.printf("%02X ", msg.buf[i]);
-        }
-        Serial.println();
-    }
-  */
+  if (Can0.read(msg)) {
+    printTempsFromMsg(msg);
+    delay(100);
+  }
 }
