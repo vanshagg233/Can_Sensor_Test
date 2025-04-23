@@ -17,11 +17,13 @@ void printTempsFromMsg(CAN_message_t msg) {
         default:
             return;
     }
-
+    //int16_t avg = 0;
     for (int i = 0; i < 4; i++) {
         int16_t raw = (msg.buf[i*2] << 8) | msg.buf[i*2 + 1];
         float temp = raw * 0.1 - 100;
         Serial.printf("%.1f°C ", temp);
+        //avg += temp;
     }
+    //float ret = avg / 2.0;
     Serial.println();
 }

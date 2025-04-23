@@ -9,30 +9,36 @@ CAN_message_t msg;
 byte configData[8] = {
   0x75, 0x30,       // Programming constant (30000)
   0x04, 0xC4,       // New CAN ID = 0x04C4 (depends on wheel location (RR, etc))
-  25,              // Emissivity = 0.25 (based on material)
+  80,              // Emissivity = 0.25 (based on material)
   8,                // 100 Hz
   40,              // 4 channels
   1                 // 1 Mbit/s
 };
 
+bool config = 0;
 
 void setup() {
     Serial.begin(115200);
     while (!Serial);  // Wait for Serial to connect
 
     Can0.begin();
-    Can0.setBaudRate(500000);  // 500kbit/s
+    Can0.setBaudRate(1000000);  // 500kbit/s
 
     Serial.println("CAN2 Ready...");
     
-    configSensor(configData, msg, Can0);
+    if (config) {
+      configSensor(configData, msg, Can0);
+    }
+    
 
 }
 
 
 void loop() {
-  // if (Can0.read(msg)) {
-  //   printTempsFromMsg(msg);
-  //   delay(100);
-  // }
+  if (!config){
+    if (Can0.read(msg)) {
+      printTempsFromMsg(msg);
+      delay(200);
+    }
+  }
 }
