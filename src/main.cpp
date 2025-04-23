@@ -22,7 +22,7 @@ void setup() {
     while (!Serial);  // Wait for Serial to connect
 
     Can0.begin();
-    Can0.setBaudRate(1000000);  // 500kbit/s
+    Can0.setBaudRate(1000000);  // 1Mbit/s
 
     Serial.println("CAN2 Ready...");
     
