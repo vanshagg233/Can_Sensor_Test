@@ -1,14 +1,15 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
 #include <Brake_IR_Sensor.h>
+#include <IR_Config.h>
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can0;
 CAN_message_t msg;
 
 byte configData[8] = {
   0x75, 0x30,       // Programming constant (30000)
-  0x04, 0xC4,       // New CAN ID = 0x04C4
-  25,              // Emissivity = 0.25
+  0x04, 0xC4,       // New CAN ID = 0x04C4 (depends on wheel location (RR, etc))
+  25,              // Emissivity = 0.25 (based on material)
   8,                // 100 Hz
   40,              // 4 channels
   1                 // 1 Mbit/s
@@ -20,35 +21,18 @@ void setup() {
     while (!Serial);  // Wait for Serial to connect
 
     Can0.begin();
-    Can0.setBaudRate(500000);  // 1Mbit/s
+    Can0.setBaudRate(500000);  // 500kbit/s
 
-    Serial.println("CAN2 Ready to receive...");
+    Serial.println("CAN2 Ready...");
+    
+    configSensor(configData, msg, Can0);
 
-  /*
-    // Prepare the config message
-    msg.id = 0x4C4;
-    msg.len = 8;
-    for (int i = 0; i < msg.len; i++) {
-      msg.buf[i] = configData[i];
-    }
-    Serial.println("Starting to send config...");
-
-    // Send once per second for 10 seconds
-    for (int i = 0; i < 10; i++) {
-      Can0.write(msg);
-      Serial.println("Message sent");
-      delay(1000);
-  }
-
-  Serial.println("Configuration complete!");
-
-  */
 }
 
 
 void loop() {
-  if (Can0.read(msg)) {
-    printTempsFromMsg(msg);
-    delay(100);
-  }
+  // if (Can0.read(msg)) {
+  //   printTempsFromMsg(msg);
+  //   delay(100);
+  // }
 }
